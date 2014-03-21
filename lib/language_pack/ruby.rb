@@ -93,6 +93,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         create_database_yml
         install_binaries
         run_assets_precompile_rake_task
+        generate_jekyll_site
       end
       super
     end
@@ -784,6 +785,14 @@ params = CGI.parse(uri.query || "")
       @metadata.write(bundler_version_cache, BUNDLER_VERSION, false)
       @metadata.write(rubygems_version_cache, rubygems_version, false)
       @metadata.save
+    end
+  end
+
+  def generate_jekyll_site
+    puts "Building jekyll site"
+    pipe("env PATH=$PATH bundle exec jekyll --no-server --no-auto 2>&1")
+    unless $? == 0
+      error "Failed to generate site with jekyll."
     end
   end
 
